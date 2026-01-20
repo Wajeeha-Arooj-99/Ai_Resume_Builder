@@ -1,8 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap');
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@tailwind: base;
+@tailwind: components;
+@tailwind: utilities;
 
 /* Global font */
 * {
@@ -14,23 +16,9 @@
   button {
     @apply cursor-pointer;
   }
+}
 
   input:not([type="checkbox"]),
   textarea {
-    @apply
-      w-full
-      outline-none
-      rounded-lg
-      border
-      border-slate-300
-      bg-white
-      px-3
-      py-2
-      text-slate-800
-      placeholder:text-slate-400
-      focus:border-blue-500
-      focus:ring-2
-      focus:ring-blue-500;
+    @apply w-full outline-none rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-800 placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500;
   }
-
-}
