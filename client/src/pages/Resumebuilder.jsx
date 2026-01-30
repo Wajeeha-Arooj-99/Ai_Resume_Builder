@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom' // 'data' hata diya kyuki wo import me nahi hota
 import { dummyResumeData } from '../assets/assets'
-import { ArrowLeftIcon, Briefcase, FileText, FolderIcon, GraduationCap, Sparkles, User } from 'lucide-react'
+import { ArrowLeft, Briefcase, ChevronLeft, ChevronRight, FileText, Folder, GraduationCap, Sparkles, User } from 'lucide-react' // ArrowLeftIcon ko ArrowLeft kiya (Lucide standard)
+import PersonalInfoForm from '../components/PersonalInfoForm'
 
 const Resumebuilder = () => {
 
@@ -16,7 +17,7 @@ const Resumebuilder = () => {
     education: [],
     project: [],
     skills: [],
-    template: "classic", // Fix 1: Yahan comma lagayi
+    template: "classic",
     accent_color: "#3B82F6",
     public: false,
   })
@@ -37,11 +38,10 @@ const Resumebuilder = () => {
     { id: "summary", name: "Summary", icon: FileText },
     { id: "experience", name: "Experience", icon: Briefcase },
     { id: "education", name: "Education", icon: GraduationCap },
-    { id: "projects", name: "Projects", icon: FolderIcon },
+    { id: "projects", name: "Projects", icon: Folder }, // FolderIcon ko Folder kiya
     { id: "skills", name: "Skills", icon: Sparkles },
   ]
 
-  // Fix 2: 'section' ko 'sections' badal diya (Kyuki array ka naam sections hai)
   const activeSection = sections[activeSectionIndex]
 
   useEffect(() => {
@@ -50,28 +50,75 @@ const Resumebuilder = () => {
 
   return (
     <div>
-
+      {/* Back Button Header */}
       <div className='max-w-7xl mx-auto px-4 py-6'>
         <Link to={'/app'} className='inline-flex gap-2 items-center text-slate-500 hover:text-slate-700 transition-all'>
-          <ArrowLeftIcon className='size-4' /> Back to Dashboard
+          <ArrowLeft className='size-4' /> Back to Dashboard
         </Link>
       </div>
 
       <div className='max-w-7xl mx-auto px-4 pb-8'>
         <div className='grid lg:grid-cols-12 gap-8'>
-          {/* Left Panel - From */}
-          <div className='relative lg:col-span-5 rounded-lg overflow-hidden'>
-            {/* Fix 3: Yahan 'relative' class add ki taaki progress bar iske andar rahe */}
-            <div className='relative bg-white rounded-lg shadow-sm border border-gray-200 p-6 pt-1'>
-              {/* Progress bar uding activeSectionIndex */}
+
+          {/* Left Panel - Form */}
+          <div className='relative lg:col-span-5'>
+            <div className='relative bg-white rounded-lg shadow-sm border border-gray-200 p-6 pt-8'>
+
+              {/* Progress Bar */}
               <hr className='absolute top-0 left-0 right-0 border-2 border-gray-200' />
-              {/* Fix 4: Isme bhi 'section' ko 'sections' badal diya */}
-              <hr className='absolute top-0 left-0 h-1 bg-gradient-to-r from-violet-500 to-violet-600 border-none transition-all duration-2000' style={{ width: `${activeSectionIndex * 100 / (sections.length - 1)}%` }} />
+              <hr
+                className='absolute top-0 left-0 h-1 bg-gradient-to-r from-violet-500 to-violet-600 border-none transition-all duration-500'
+                style={{ width: `${activeSectionIndex * 100 / (sections.length - 1)}%` }}
+              />
+
+              {/* Navigation Buttons (Header) */}
+              <div className='flex justify-between items-center mb-6'>
+                {/* Previous Button */}
+                <div>
+                  {activeSectionIndex !== 0 && (
+                    <button
+                      onClick={() => setActiveSectionIndex((prevIndex) => Math.max(prevIndex - 1, 0))}
+                      className='flex items-center gap-1 p-3 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50 transition-all'
+                      disabled={activeSectionIndex === 0}
+                    >
+                      <ChevronLeft className='size-4' /> Previous
+                    </button>
+                  )}
+                </div>
+
+                {/* Next Button */}
+                <div>
+                  <button
+                    onClick={() => setActiveSectionIndex((prevIndex) => Math.min(prevIndex + 1, sections.length - 1))}
+                    className={`flex items-center gap-1 p-3 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50 transition-all ${activeSectionIndex === sections.length - 1 && 'opacity-50'}`}
+                    disabled={activeSectionIndex === sections.length - 1}
+                  >
+                    Next <ChevronRight className='size-4' />
+                  </button>
+                </div>
+              </div>
+              <hr className='border-gray-200 my-4' />
+
+              {/* Form Content (Alag kar diya tha, ab sahi jagah hai) */}
+              <div className='space-y-6 mt-4'>
+                {activeSection.id === 'personal' && (
+                  <PersonalInfoForm
+                    data={resumeData.personal_info}
+                    onChange={(data) => setResumeData(prev => ({ ...prev, personal_info: data }))}
+                    removeBackground={removeBackground}
+                    setRemoveBackground={setRemoveBackground}
+                  />
+                )}
+                {/* Aage aur sections (Education, Skills etc) yahan ayenge */}
+              </div>
+
             </div>
           </div>
 
           {/* Right Panel - Preview */}
-          <div></div>
+          <div className='lg:col-span-7 bg-gray-50 rounded-lg border border-dashed border-gray-300 flex items-center justify-center min-h-[500px]'>
+            <p className="text-gray-400">Preview Area</p>
+          </div>
 
         </div>
 
@@ -80,4 +127,5 @@ const Resumebuilder = () => {
     </div>
   )
 }
+
 export default Resumebuilder
