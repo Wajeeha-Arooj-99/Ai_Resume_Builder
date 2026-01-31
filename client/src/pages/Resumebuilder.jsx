@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react'
-import { Link, useParams } from 'react-router-dom' // 'data' hata diya kyuki wo import me nahi hota
+import { Link, useParams } from 'react-router-dom'
 import { dummyResumeData } from '../assets/assets'
-import { ArrowLeft, Briefcase, ChevronLeft, ChevronRight, FileText, Folder, GraduationCap, Sparkles, User } from 'lucide-react' // ArrowLeftIcon ko ArrowLeft kiya (Lucide standard)
+import { ArrowLeft, Briefcase, ChevronLeft, ChevronRight, FileText, Folder, GraduationCap, Sparkles, User } from 'lucide-react'
 import PersonalInfoForm from '../components/PersonalInfoForm'
+import ResumePreview from '../components/ResumePreview'
 
 const Resumebuilder = () => {
 
@@ -38,7 +39,7 @@ const Resumebuilder = () => {
     { id: "summary", name: "Summary", icon: FileText },
     { id: "experience", name: "Experience", icon: Briefcase },
     { id: "education", name: "Education", icon: GraduationCap },
-    { id: "projects", name: "Projects", icon: Folder }, // FolderIcon ko Folder kiya
+    { id: "projects", name: "Projects", icon: Folder },
     { id: "skills", name: "Skills", icon: Sparkles },
   ]
 
@@ -46,7 +47,7 @@ const Resumebuilder = () => {
 
   useEffect(() => {
     loadExistingResume()
-  }, [])
+  }, [resumeId])
 
   return (
     <div>
@@ -99,7 +100,7 @@ const Resumebuilder = () => {
               </div>
               <hr className='border-gray-200 my-4' />
 
-              {/* Form Content (Alag kar diya tha, ab sahi jagah hai) */}
+              {/* Form Content */}
               <div className='space-y-6 mt-4'>
                 {activeSection.id === 'personal' && (
                   <PersonalInfoForm
@@ -109,17 +110,29 @@ const Resumebuilder = () => {
                     setRemoveBackground={setRemoveBackground}
                   />
                 )}
-                {/* Aage aur sections (Education, Skills etc) yahan ayenge */}
+                {/* Aage aur sections yahan ayenge */}
               </div>
 
             </div>
           </div>
 
           {/* Right Panel - Preview */}
-          <div className='lg:col-span-7 bg-gray-50 rounded-lg border border-dashed border-gray-300 flex items-center justify-center min-h-[500px]'>
-            <p className="text-gray-400">Preview Area</p>
-          </div>
+          <div className='lg:col-span-7 max-lg:mt-6 flex flex-col h-full'>
 
+            {/* Buttons Container */}
+            <div className="flex justify-end gap-2 mb-4">
+              <button className="text-sm bg-gray-100 px-3 py-1 rounded hover:bg-gray-200">Print</button>
+            </div>
+
+            {/* Preview Container - FIXED horizontal scroll issue */}
+            <div className='flex-1 min-h-[800px] bg-gray-100 rounded-lg overflow-y-auto overflow-x-hidden flex justify-center p-4 lg:p-8'>
+              <ResumePreview
+                data={resumeData}
+                template={resumeData.template}
+                accentColor={resumeData.accent_color}
+              />
+            </div>
+          </div>
         </div>
 
       </div>
