@@ -53,13 +53,13 @@ const ModernTemplate = ({ data, accentColor }) => {
 			</header>
 
 			<div className="p-8">
-				{/* Professional Summary */}
-				{data.professional_summary && (
+				{/* Professional Summary - FIXED */}
+				{data.Professional_summary && (
 					<section className="mb-8">
 						<h2 className="text-2xl font-light mb-4 pb-2 border-b border-gray-200">
 							Professional Summary
 						</h2>
-						<p className="text-gray-700 ">{data.professional_summary}</p>
+						<p className="text-gray-700 ">{data.Professional_summary}</p>
 					</section>
 				)}
 
@@ -103,7 +103,7 @@ const ModernTemplate = ({ data, accentColor }) => {
 
 						<div className="space-y-6">
 							{data.project.map((p, index) => (
-								<div key={index} className="relative pl-6 border-l border-gray-200" style={{borderLeftColor: accentColor}}>
+								<div key={index} className="relative pl-6 border-l border-gray-200" style={{ borderLeftColor: accentColor }}>
 
 
 									<div className="flex justify-between items-start">

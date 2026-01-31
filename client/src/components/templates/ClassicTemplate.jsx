@@ -1,4 +1,4 @@
-import { Mail, Phone, MapPin, Linkedin, Globe } from 'lucide-react'
+import { Mail, Phone, MapPin, Globe, Linkedin } from "lucide-react";
 
 const ClassicTemplate = ({ data, accentColor }) => {
     const formatDate = (dateStr) => {
@@ -52,13 +52,13 @@ const ClassicTemplate = ({ data, accentColor }) => {
                 </div>
             </header>
 
-            {/* Professional Summary */}
-            {data.professional_summary && (
+            {/* Professional Summary - FIXED */}
+            {data.Professional_summary && (
                 <section className="mb-6">
                     <h2 className="text-xl font-semibold mb-3" style={{ color: accentColor }}>
                         PROFESSIONAL SUMMARY
                     </h2>
-                    <p className="text-gray-700 leading-relaxed">{data.professional_summary}</p>
+                    <p className="text-gray-700 leading-relaxed">{data.Professional_summary}</p>
                 </section>
             )}
 
