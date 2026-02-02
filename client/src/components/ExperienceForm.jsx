@@ -5,12 +5,12 @@ const ExperienceForm = ({ data, onChange }) => {
 
     const addExperience = () => {
         const newExperience = {
-            company: "", // ✅ Fixed typo: comapny → company
+            company: "",
             position: "",
             start_date: "",
             end_date: "",
             description: "",
-            is_current: false // ✅ Fixed typo: is_crrent → is_current
+            is_current: false
         };
         onChange([...data, newExperience])
     }
