@@ -1,11 +1,11 @@
-import { GraduationCap } from "lucide-react";
+import { GraduationCap, Plus, Trash2 } from "lucide-react"; // ✅ Added Plus, Trash2
 import React from "react";
 
 const EducationForm = ({ data, onChange }) => {
 
     const addEducation = () => {
         const newEducation = {
-            Institution: "",
+            institution: "", // ✅ Fixed: Institution → institution (lowercase)
             degree: "",
             field: "",
             graduation_date: "",
@@ -60,7 +60,7 @@ const EducationForm = ({ data, onChange }) => {
 
                             <div className="grid md:grid-cols-2 gap-3">
                                 <input
-                                    value={education.Institution || ""}
+                                    value={education.institution || ""} // ✅ Fixed: Institution → institution
                                     onChange={(e) => updateEducation(index, "institution", e.target.value)}
                                     type="text"
                                     placeholder="Institution Name"
@@ -72,15 +72,15 @@ const EducationForm = ({ data, onChange }) => {
                                     onChange={(e) => updateEducation(index, "degree", e.target.value)}
                                     type="text"
                                     placeholder="Degree (e.g., Bachelor's Master's)"
-                                    className="px-3 py-2 text-sm border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    className="px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" // ✅ Added rounded-lg
                                 />
 
                                 <input
                                     value={education.field || ""}
                                     onChange={(e) => updateEducation(index, "field", e.target.value)}
                                     type="text"
-                                    placeholder="Field od Study"
-                                    className="px-3 py-2 text-sm border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    placeholder="Field of Study"
+                                    className="px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" // ✅ Added rounded-lg
                                 />
 
                                 <input
@@ -92,31 +92,12 @@ const EducationForm = ({ data, onChange }) => {
                             </div>
 
                             <input
-                                value={education.field || ""}
-                                onChange={(e) => updateEducation(index, "field", e.target.value)}
+                                value={education.gpa || ""}
+                                onChange={(e) => updateEducation(index, "gpa", e.target.value)}
                                 type="text"
-                                placeholder="Field od Study"
-                                className="px-3 py-2 text-sm border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                placeholder="GPA (optional)"
+                                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" // ✅ Added w-full and rounded-lg
                             />
-
-
-
-                            <div className="space-y-2">
-                                <div className="flex items-center justify-between">
-                                    <label className="text-sm font-medium text-gray-700">Job Description</label>
-                                    <button className="flex items-center justify-center gap-1 px-2 py-1 text-xs bg-purple-100 text-purple-700 rounded hover:bg-purple-200 transition-colors disabled:opacity-50">
-                                        <Sparkles className="w-3 h-3" />
-                                        Enhance with AI
-                                    </button>
-                                </div>
-                                <textarea
-                                    value={education.description || ""}
-                                    onChange={(e) => updateEducation(index, "description", e.target.value)}
-                                    rows={4}
-                                    className="w-full text-sm px-3 py-2 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    placeholder="Describe your key responsibilities and achievements..."
-                                />
-                            </div>
                         </div>
                     ))}
                 </div>
