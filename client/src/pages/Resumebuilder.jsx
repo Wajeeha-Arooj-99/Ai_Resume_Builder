@@ -11,6 +11,8 @@ import ExperienceForm from '../components/ExperienceForm'
 import EducationForm from '../components/EducationForm'
 import ProjectForm from '../components/ProjectForm'
 import SkillsForm from '../components/SkillsForm'
+import api from '../configs/api'
+import toast from 'react-hot-toast'
 
 
 const Resumebuilder = () => {
@@ -21,7 +23,7 @@ const Resumebuilder = () => {
     _id: '',
     title: '',
     personal_info: {},
-    Professional_summary: "",
+    professional_summary: "",
     experience: [],
     education: [],
     project: [],
@@ -32,15 +34,27 @@ const Resumebuilder = () => {
   })
 
   const loadExistingResume = async () => {
-    const resume = dummyResumeData.find(resume => resume._id === resumeId)
-    if (resume) {
-      setResumeData(resume)
-      document.title = resume.title
+    try {
+      const { data } = await api.get(`/api/resumes/get/${resumeId}`)
+      if (data.resume) {
+        setResumeData(data.resume)
+        document.title = data.resume.title
+      }
+    } catch (error) {
+      // Fallback to try dummy data for testing
+      const resume = dummyResumeData.find(resume => resume._id === resumeId)
+      if (resume) {
+        setResumeData(resume)
+        document.title = resume.title
+      } else {
+        toast.error('Failed to load resume')
+      }
     }
   }
 
   const [activeSectionIndex, setActiveSectionIndex] = useState(0)
-  const [removeBackground, setRemoveBackground] = useState(false);
+  const [removeBackground, setRemoveBackground] = useState(false)
+  const [saving, setSaving] = useState(false)
 
   const sections = [
     { id: "personal", name: "personal Info", icon: User },
@@ -58,7 +72,33 @@ const Resumebuilder = () => {
   }, [resumeId])
 
   const changeResumeVisibility = async () => {
-    setResumeData({ ...resumeData, public: !resumeData.public })
+    try {
+      setSaving(true)
+      const newPublicStatus = !resumeData.public
+      await api.put(`/api/resumes/${resumeId}`, {
+        ...resumeData,
+        public: newPublicStatus
+      })
+      setResumeData({ ...resumeData, public: newPublicStatus })
+      toast.success(`Resume is now ${newPublicStatus ? 'public' : 'private'}`)
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to update visibility')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  const saveResume = async () => {
+    try {
+      setSaving(true)
+      const { data } = await api.put(`/api/resumes/${resumeId}`, resumeData)
+      setResumeData(data.resume)
+      toast.success('Resume saved successfully')
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to save resume')
+    } finally {
+      setSaving(false)
+    }
   }
 
   const handleShare = () => {
@@ -147,7 +187,7 @@ alert('Share not supported on this browser.')
                 )}
 
                 {activeSection.id === 'summary' && (
-                  <ProfessionalSummaryForm data={resumeData.Professional_summary} onChange={(data) => setResumeData(prev => ({ ...prev, Professional_summary: data }))} setResumeData={setResumeData} />
+                  <ProfessionalSummaryForm data={resumeData.professional_summary} onChange={(data) => setResumeData(prev => ({ ...prev, professional_summary: data }))} setResumeData={setResumeData} />
                 )}
 
                 {activeSection.id === 'experience' && (
@@ -159,7 +199,7 @@ alert('Share not supported on this browser.')
                 )}
 
                 {activeSection.id === 'projects' && (
-                  <ProjectForm data={resumeData.project} onChange={(data) => setResumeData(prev => ({ ...prev, education: data }))} />
+                  <ProjectForm data={resumeData.project} onChange={(data) => setResumeData(prev => ({ ...prev, project: data }))} />
                 )}
 
                 {activeSection.id === 'skills' && (
@@ -167,8 +207,8 @@ alert('Share not supported on this browser.')
                 )}
 
               </div>
-              <button className=' bg-gradient-to-br from-violet-100 to-violet-200 ring-violet-300 text-violet-600 ring hover:ring-violet-400 transition-all rounded-md px-6 py-2 mt-6 text-sm'>
-                Save Changes
+              <button onClick={saveResume} disabled={saving} className=' bg-gradient-to-br from-violet-100 to-violet-200 ring-violet-300 text-violet-600 ring hover:ring-violet-400 transition-all rounded-md px-6 py-2 mt-6 text-sm disabled:opacity-50 disabled:cursor-not-allowed'>
+                {saving ? 'Saving...' : 'Save Changes'}
               </button>
             </div>
           </div>

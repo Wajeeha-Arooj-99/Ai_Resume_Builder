@@ -2,6 +2,18 @@ import imagekit from "../configs/imagekit.js";
 import Resume from "../models/Resume.js";
 import fs from 'fs';
 
+// controller for getting all user resumes
+// GET: /api/resumes
+export const getAllUserResumes = async (req, res) => {
+    try {
+        const userId = req.userId;
+        const resumes = await Resume.find({ userId }).sort({ createdAt: -1 });
+        return res.status(200).json({ resumes });
+    } catch (error) {
+        return res.status(400).json({ message: error.message });
+    }
+}
+
 // controller for creating a new resume
 // POST: /api/resumes/create
 export const createResume = async (req, res) => {

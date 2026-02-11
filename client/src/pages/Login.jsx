@@ -32,15 +32,25 @@ const Login = () => {
     e.preventDefault();
 
     try {
-      // ✅ Fix 2: Correct API endpoint
+      // Check for required fields
+      if (state === 'register' && !formData.name) {
+        toast.error('Please enter your full name');
+        return;
+      }
+      if (!formData.email || !formData.password) {
+        toast.error('Please fill in all fields');
+        return;
+      }
+
+      // Correct API endpoint
       const endpoint = state === 'login' ? '/api/users/login' : '/api/users/register';
       const { data } = await api.post(endpoint, formData);
 
-      // ✅ Fix 3: Use loginAction (renamed import)
+      // Dispatch login action
       dispatch(loginAction({ token: data.token, user: data.user }));
       localStorage.setItem('token', data.token);
       toast.success(data.message);
-      navigate('/app'); // ✅ Redirect to dashboard
+      navigate('/app'); // Redirect to dashboard
     } catch (error) {
       toast.error(error.response?.data?.message || error.message);
     }

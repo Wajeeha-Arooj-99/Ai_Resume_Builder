@@ -2,9 +2,12 @@ import React, { useEffect, useState } from 'react'
 import { FilePenLineIcon, PencilIcon, PlusIcon, TrashIcon, UploadCloud, UploadCloudIcon, XIcon } from 'lucide-react'
 import { dummyResumeData } from '../assets/assets'
 import { useNavigate } from 'react-router-dom'
+import { useSelector } from 'react-redux'
+import api from '../configs/api'
+import toast from 'react-hot-toast'
 
 const Dashboard = () => {
-
+  const { user } = useSelector(state => state.auth)
   const colors = ["#9333ea", "#d97706", "#dc2626", "#0284c7", "#16a34a"]
   const [allResumes, setAllResumes] = useState([])
   const [showCreateResume, setShowCreateResume] = useState(false)
@@ -12,32 +15,92 @@ const Dashboard = () => {
   const [title, setTitle] = useState('')
   const [resume, setResume] = useState(null)
   const [editResumeId, setEditResumeId] = useState('')
+  const [loading, setLoading] = useState(true)
 
   const navigate = useNavigate()
 
   const loadAllResumes = async () => {
-    setAllResumes(dummyResumeData)
+    try {
+      const { data } = await api.get('/api/resumes')
+      setAllResumes(data.resumes || [])
+    } catch (error) {
+      console.log('Error loading resumes:', error.message)
+      // Fallback to dummy data for testing
+      setAllResumes(dummyResumeData)
+    } finally {
+      setLoading(false)
+    }
   }
   const createResume = async (event) => {
     event.preventDefault()
-    setShowCreateResume(false)
-    navigate(`/app/builder/resume123`)
+    if (!title.trim()) {
+      toast.error('Please enter a resume title')
+      return
+    }
+    try {
+      const { data } = await api.post('/api/resumes', { title })
+      setShowCreateResume(false)
+      setTitle('')
+      navigate(`/app/builder/${data.resume._id}`)
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to create resume')
+    }
   }
 
   const uploadResume = async (event) => {
     event.preventDefault()
-    setShowUploadResume(false)
-    navigate(`/app/builder/resume123`)
+    if (!title.trim()) {
+      toast.error('Please enter a resume title')
+      return
+    }
+    if (!resume) {
+      toast.error('Please select a resume file')
+      return
+    }
+    try {
+      const formData = new FormData()
+      formData.append('title', title)
+      formData.append('resume', resume)
+      const { data } = await api.post('/api/resumes/upload', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      })
+      setShowUploadResume(false)
+      setTitle('')
+      setResume(null)
+      navigate(`/app/builder/${data.resume._id}`)
+      toast.success('Resume uploaded successfully')
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to upload resume')
+    }
   }
 
   const editTitle = async (event) => {
     event.preventDefault()
+    if (!title.trim()) {
+      toast.error('Please enter a resume title')
+      return
+    }
+    try {
+      await api.put(`/api/resumes/${editResumeId}`, { title })
+      setEditResumeId('')
+      setTitle('')
+      loadAllResumes()
+      toast.success('Resume title updated')
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to update resume')
+    }
   }
 
   const deleteResume = async (resumeId) => {
     const confirm = window.confirm('Are you sure you want to delete this Resume?')
     if(confirm){
-      setAllResumes(prev => prev.filter(resume => resume._id !== resumeId))
+      try {
+        await api.delete(`/api/resumes/${resumeId}`)
+        setAllResumes(prev => prev.filter(resume => resume._id !== resumeId))
+        toast.success('Resume deleted successfully')
+      } catch (error) {
+        toast.error(error.response?.data?.message || 'Failed to delete resume')
+      }
     }
   }
 
@@ -45,11 +108,19 @@ const Dashboard = () => {
     loadAllResumes()
   }, [])
 
+  if (loading) {
+    return (
+      <div className='flex items-center justify-center min-h-screen'>
+        <div className='size-12 border-4 border-gray-400 border-t-transparent rounded-full animate-spin'></div>
+      </div>
+    )
+  }
+
   return (
     <div>
       <div className='max-w-7xl mx-auto px-4 py-8'>
 
-        <p className='text-2xl font-medium mb-6 bg-gradient-to-r from-slate-600 to-slate-700 bg-clip-text text-transparent sm-hidden'>Welcome, Joe Doe</p>
+        <p className='text-2xl font-medium mb-6 bg-gradient-to-r from-slate-600 to-slate-700 bg-clip-text text-transparent sm-hidden'>Welcome, {user?.name || 'User'}</p>
 
         <div className='flex gap-4'>
           <button onClick={() => setShowCreateResume(true)} className='w-full bg-white sm:max-w-36 h-48 flex flex-col items-center justify-center rounded-lg gap-2 text-slate-600 border border-dashed border-slate-300 group hover:border-indigo-500 hover:shadow-lg transition-all duration-300 cursor-pointer'>
