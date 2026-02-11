@@ -2,7 +2,7 @@ import React from 'react'
 
 const Banner = () => {
     return (
-        <div className="flex flex-wrap items-center justify-between w-full px-4 md:px-14 py-2 font-medium text-sm text-white text-center bg-gradient-to-r from-[#951abe] to-purple-100">
+        <div className="flex flex-wrap items-center justify-between w-full px-4 md:px-14 py-2 font-medium text-sm text-white text-center bg-linear-to-r from-[#951abe] to-purple-100">
             <p>Build Faster with Responsive Tailwind CSS Templates</p>
             <a href="#" className="flex items-center gap-1 px-3 py-1 rounded-lg text-[#951abe] bg-violet-50 hover:bg-slate-100 transition active:scale-95 ml-3">
                 Explore now
