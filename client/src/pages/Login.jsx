@@ -1,14 +1,16 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Mail, Lock, User2 } from 'lucide-react';
 import { useDispatch } from 'react-redux';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import api from '../configs/api';
 import { login as loginAction } from '../app/features/authSlice'; // ✅ Renamed import
 import toast from 'react-hot-toast';
 
 const Login = () => {
-  const [searchParams] = useSearchParams();
-  const [state, setState] = React.useState("login");
+  const [state, setState] = React.useState(() => {
+    const mode = new URLSearchParams(window.location.search).get('state');
+    return mode === 'register' ? 'register' : 'login';
+  });
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -17,16 +19,6 @@ const Login = () => {
     email: '',
     password: ''
   });
-
-  // ✅ Fix 1: 'state' parameter name change
-  useEffect(() => {
-    const mode = searchParams.get('state'); // ✅ Get 'state' from URL
-    if (mode === 'register') {
-      setState('register');
-    } else {
-      setState('login');
-    }
-  }, [searchParams]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

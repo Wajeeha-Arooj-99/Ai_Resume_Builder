@@ -60,9 +60,8 @@ const ModernTemplate = ({ data, accentColor }) => {
 						Professional Summary
 					</h2>
 					<p className="text-gray-700 ">{data.professional_summary}</p>
-				)}
-
-				{/* Experience */}
+				</section>
+			)}
 				{data.experience && data.experience.length > 0 && (
 					<section className="mb-8">
 						<h2 className="text-2xl font-light mb-6 pb-2 border-b border-gray-200">

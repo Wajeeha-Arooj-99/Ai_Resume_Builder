@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { dummyResumeData } from '../assets/assets'
 import ResumePreview from '../components/ResumePreview'
@@ -11,28 +11,27 @@ const Preview = () => {
 
   const [isLoading, setIsLoading] = useState(true)
   const [resumeData, setResumeData] = useState(null)
-  const [error, setError] = useState(false)
 
-  const loadResume = async () => {
+  const loadResume = useCallback(async () => {
     try {
       const { data } = await api.get(`/api/resumes/public/${resumeId}`)
       setResumeData(data.resume)
-    } catch (error) {
+    } catch {
       // Fallback to dummy data for testing
       const foundResume = dummyResumeData.find(resume => resume._id === resumeId)
       if (foundResume) {
         setResumeData(foundResume)
       } else {
-        setError(true)
+        setResumeData(null)
       }
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [resumeId])
 
   useEffect(() => {
     loadResume()
-  }, [resumeId])
+  }, [loadResume])
 
   return resumeData ? (
     <div className='bg-slate-100 min-h-screen'>

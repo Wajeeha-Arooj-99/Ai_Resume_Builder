@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { dummyResumeData } from '../assets/assets'
 import { ArrowLeft, Briefcase, ChevronLeft, ChevronRight, DownloadIcon, EyeIcon, EyeOffIcon, FileText, Folder, GraduationCap, Share2Icon, Sparkles, User } from 'lucide-react'
@@ -33,14 +33,14 @@ const Resumebuilder = () => {
     public: false,
   })
 
-  const loadExistingResume = async () => {
+  const loadExistingResume = useCallback(async () => {
     try {
       const { data } = await api.get(`/api/resumes/get/${resumeId}`)
       if (data.resume) {
         setResumeData(data.resume)
         document.title = data.resume.title
       }
-    } catch (error) {
+    } catch {
       // Fallback to try dummy data for testing
       const resume = dummyResumeData.find(resume => resume._id === resumeId)
       if (resume) {
@@ -50,7 +50,7 @@ const Resumebuilder = () => {
         toast.error('Failed to load resume')
       }
     }
-  }
+  }, [resumeId])
 
   const [activeSectionIndex, setActiveSectionIndex] = useState(0)
   const [removeBackground, setRemoveBackground] = useState(false)
@@ -69,7 +69,7 @@ const Resumebuilder = () => {
 
   useEffect(() => {
     loadExistingResume()
-  }, [resumeId])
+  }, [loadExistingResume])
 
   const changeResumeVisibility = async () => {
     try {
